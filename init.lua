@@ -371,7 +371,6 @@ do
     spec = {
       { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
       { '<leader>t', group = '[T]oggle' },
-      { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
       { 'gr', group = 'LSP Actions', mode = { 'n' } },
     },
   }
@@ -449,6 +448,14 @@ do
   ---@diagnostic disable-next-line: duplicate-set-field
   statusline.section_location = function() return '%2l:%-2v' end
 
+  -- my own mini plugins that are not activated by default in kickstart
+  require('mini.visits').setup()
+  vim.keymap.set("n", "<leader>sv", function()
+    require("telescope.builtin").find_files({
+      prompt_title = "Recent Visits",
+      search_dirs = require("mini.visits").list_paths()
+    })
+  end, {desc = "[S]earch Recent [V]isit" })
   -- ... and there is more!
   --  Check out: https://github.com/nvim-mini/mini.nvim
 end
@@ -621,7 +628,12 @@ do
 
   -- Useful status updates for LSP.
   vim.pack.add { gh 'j-hui/fidget.nvim' }
-  require('fidget').setup {}
+  require('fidget').setup {
+    -- Turn on Fidget for standard Neovim notifications
+    notification = {
+      override_vim_notify = true,
+    },
+  }
 
   --  This function gets run when an LSP attaches to a particular buffer.
   --    That is to say, every time a new file is opened that is associated with
@@ -699,7 +711,7 @@ do
     -- clangd = {},
     -- gopls = {},
     -- pyright = {},
-    rust_analyzer = {},
+    -- rust_analyzer = {},
     --
     -- Some languages (like typescript) have entire language plugins that can be useful:
     --    https://github.com/pmizio/typescript-tools.nvim
@@ -887,7 +899,7 @@ do
     -- the rust implementation via `'prefer_rust_with_warning'`
     --
     -- See `:help blink-cmp-config-fuzzy` for more information
-    fuzzy = { implementation = 'lua' },
+    fuzzy = { implementation = 'prefer_rust_with_warning' },
 
     -- Shows a signature help window while you type arguments for a function
     signature = { enabled = true },
@@ -980,7 +992,7 @@ do
   -- NOTE: You can add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- require 'custom.plugins'
+  require 'custom.plugins'
 end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
