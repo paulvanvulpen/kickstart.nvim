@@ -371,6 +371,7 @@ do
     spec = {
       { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
       { '<leader>t', group = '[T]oggle' },
+      { '<leader>h', group = '[H]arpoon' },
       { 'gr', group = 'LSP Actions', mode = { 'n' } },
     },
   }
@@ -505,11 +506,14 @@ do
     -- You can put your default mappings / updates / etc. in here
     --  All the info you're looking for is in `:help telescope.setup()`
     --
-    -- defaults = {
+    defaults = {
+      file_ignore_patterns = {
+        "%.git/",
+      },
     --   mappings = {
     --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
     --   },
-    -- },
+    },
     -- pickers = {}
     extensions = {
       ['ui-select'] = { require('telescope.themes').get_dropdown() },
@@ -995,5 +999,28 @@ do
   require 'custom.plugins'
 end
 
+local function load_project_config()
+  -- 1. Get the base name of the current working directory (e.g., "c-compiler-in-rust")
+  local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+  -- 2. Construct the absolute path to the custom project file
+  local project_config_path = vim.fn.stdpath('config') .. '/lua/custom/projects/' .. project_name .. '.lua'
+
+  -- 3. If the file exists, execute it
+  if vim.fn.filereadable(project_config_path) == 1 then
+    -- using dofile() instead of require() so it re-evaluates fresh when 
+    -- switching back and forth between projects in the same Neovim session.
+    dofile(project_config_path)
+  end
+end
+
+-- 4. Create an autocommand to run this automatically
+local project_loader_group = vim.api.nvim_create_augroup('ProjectLoader', { clear = true })
+
+vim.api.nvim_create_autocmd({ 'VimEnter', 'DirChanged' }, {
+  group = project_loader_group,
+  callback = function()
+    load_project_config()
+  end,
+})
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
