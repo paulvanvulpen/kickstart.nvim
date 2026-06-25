@@ -30,4 +30,4 @@ local function run_compiler_stage()
   end)
 end
 
-vim.keymap.set('n', '<leader>cc', run_compiler_stage, { desc = '[C]ompiler [C]hoice', buffer = true })
+vim.keymap.set('n', '<leader>cc', run_compiler_stage, { desc = '[C]ompiler [C]hoice' })

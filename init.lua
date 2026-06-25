@@ -1009,6 +1009,7 @@ local function load_project_config()
   if vim.fn.filereadable(project_config_path) == 1 then
     -- using dofile() instead of require() so it re-evaluates fresh when 
     -- switching back and forth between projects in the same Neovim session.
+    require('fidget').notify("Loaded custom project: " .. project_name, vim.log.levels.INFO)
     dofile(project_config_path)
   end
 end
