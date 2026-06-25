@@ -1011,6 +1011,8 @@ local function load_project_config()
     -- switching back and forth between projects in the same Neovim session.
     require('fidget').notify("Loaded custom project: " .. project_name, vim.log.levels.INFO)
     dofile(project_config_path)
+  else
+    require('fidget').notify("No custom project defined for: " .. project_name, vim.log.levels.WARN)
   end
 end
 
