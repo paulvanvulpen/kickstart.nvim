@@ -20,5 +20,6 @@ vim.list_extend(
 	"^[^%-]+%-Audio\\",
 	"^Test\\",
 	"^Tools\\",
+	"^Plugins\\3rdparty\\",
   }
 )
