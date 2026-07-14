@@ -2,8 +2,7 @@
 
 local function run_compiler_choice()
   local options = {
-    { label = "1. build and run", args = ""},
-    { label = "2. build and run", args = ""},
+    { label = "1. build and run", cargo_args = "--features bevy/dynamic_linking", args = ""},
   }
 
   vim.ui.select(options, {
@@ -12,7 +11,7 @@ local function run_compiler_choice()
   }, function(choice)
     if not choice then return end
 
-    local cmd = string.format("split | terminal cargo run -- %s", choice.args)
+    local cmd = string.format("split | terminal cargo run %s -- %s", choice.cargo_args, choice.args)
     vim.cmd(cmd)
   end)
 end

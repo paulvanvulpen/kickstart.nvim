@@ -372,6 +372,7 @@ do
       { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
       { '<leader>t', group = '[T]oggle' },
       { '<leader>h', group = '[H]arpoon' },
+      { '<leader>c', group = '[C]ompile' },
       { 'gr', group = 'LSP Actions', mode = { 'n' } },
     },
   }
@@ -451,12 +452,26 @@ do
 
   -- my own mini plugins that are not activated by default in kickstart
   require('mini.visits').setup()
+
   vim.keymap.set("n", "<leader>sv", function()
-    require("telescope.builtin").find_files({
-      prompt_title = "Recent Visits",
-      search_dirs = require("mini.visits").list_paths()
+    local paths = require("mini.visits").list_paths(nil, {
+      filter = function(visit)
+        return vim.fn.isdirectory(visit.path) == 0
+      end
     })
-  end, {desc = "[S]earch Recent [V]isit" })
+    require("telescope.pickers").new({}, {
+      prompt_title = "Recent Visits",
+      -- new_table preserves the exact order of the array provided to it
+      finder = require("telescope.finders").new_table({
+        results = paths,
+        -- gen_from_file ensures Telescope treats these strings as actual files
+        entry_maker = require("telescope.make_entry").gen_from_file({}),
+      }),
+      file_ignore_patterns = {"^%.$"},
+      sorter = require("telescope.config").values.file_sorter({}),
+      previewer = require("telescope.config").values.file_previewer({}),
+    }):find()
+  end, { desc = "[S]earch Recent [V]isit" })
   -- ... and there is more!
   --  Check out: https://github.com/nvim-mini/mini.nvim
 end
@@ -998,7 +1013,7 @@ do
   require 'kickstart.plugins.debug'
   -- require 'kickstart.plugins.indent_line'
   require 'kickstart.plugins.lint'
-  -- require 'kickstart.plugins.autopairs'
+  require 'kickstart.plugins.autopairs'
   -- require 'kickstart.plugins.neo-tree'
   -- require 'kickstart.plugins.gitsigns' -- adds gitsigns recommended keymaps
 
