@@ -476,6 +476,22 @@ do
   --  Check out: https://github.com/nvim-mini/mini.nvim
 end
 
+vim.api.nvim_create_user_command('VisitRemove', function()
+  -- Get the absolute path of the current file
+  local current_path = vim.fn.expand('%:p')
+
+  if current_path == '' then
+    vim.notify("No active file to remove from visits", vim.log.levels.WARN)
+    return
+  end
+
+  -- Remove and write index
+  MiniVisits.remove_path(current_path)
+  MiniVisits.write_index()
+
+  vim.notify("Removed current file from mini.visits index", vim.log.levels.INFO)
+end, {})
+
 -- ============================================================
 -- SECTION 5: SEARCH & NAVIGATION
 -- Telescope setup, keymaps, LSP picker mappings
