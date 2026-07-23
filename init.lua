@@ -541,6 +541,7 @@ do
       file_ignore_patterns = {
         "%.git/",
       },
+      path_display = { "filename_first" },
     --   mappings = {
     --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
     --   },
